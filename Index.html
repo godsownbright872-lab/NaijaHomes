@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaijaHomes - Find Your Dream Property in Nigeria</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #008753; /* Nigerian green */
+            --secondary: #FFFFFF; /* White */
+            --accent: #E6BE8A; /* Gold accent */
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: var(--secondary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .logo i {
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Auth Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .close-modal:hover {
+            color: var(--dark);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .auth-form h2 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .form-control {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .auth-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .auth-submit:hover {
+            background: #006e43;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+        }
+
+        .auth-switch a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .user-menu {
+            display: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid var(--gray);
+            color: var(--gray);
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: var(--gray);
+            color: white;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 5%;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        /* Search Form */
+        .search-container {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+            align-self: end;
+        }
+        
+        .search-btn:hover {
+            background: #006e43;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            background: var(--secondary);
+            padding: 60px 5%;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            color: var(--dark);
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .step {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .step-icon {
+            background: var(--primary);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+        }
+        
+        /* Post Ad Section */
+        .post-ad {
+            background: linear-gradient(to right, var(--primary), #006e43);
+            color: white;
+            padding: 80px 5%;
+            text-align: center;
+        }
+        
+        .post-ad h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .post-ad p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 5% 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #444;
+            color: #aaa;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="top-bar">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <span>NaijaHomes</span>
+            </div>
+            <div class="nav-links">
+                <a href="#">Buy</a>
+                <a href="#">Rent</a>
+                <a href="#">Sell</a>
+                <a href="#">Agents</a>
+                <a href="#">Resources</a>
+            </div>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-outline" id="signInBtn">Sign In</button>
+                <button class="btn btn-primary" id="signUpBtn">Sign Up</button>
+            </div>
+            <div class="user-menu" id="userMenu">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span class="user-name" id="userName">User</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sign In Modal -->
+    <div class="modal" id="signInModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeSignIn">&times;</span>
+            <form class="auth-form" id="signInForm">
+                <h2>Sign In to NaijaHomes</h2>
+                <div class="form-group">
+                    <label for="signInEmail">Email</label>
+                    <input type="email" id="signInEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signInPassword">Password</label>
+                    <input type="password" id="signInPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="auth-submit">Sign In</button>
+                <div class="auth-switch">
+                    Don't have an account? <a href="#" id="switchToSignUp">Sign Up</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div class="modal" id="signUpModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeSignUp">&times;</span>
+            <form class="auth-form" id="signUpForm">
+                <h2>Create Your Account</h2>
+                <div class="form-group">
+                    <label for="signUpName">Full Name</label>
+                    <input type="text" id="signUpName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpEmail">Email</label>
+                    <input type="email" id="signUpEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpPhone">Phone Number</label>
+                    <input type="tel" id="signUpPhone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpPassword">Password</label>
+                    <input type="password" id="signUpPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signUpConfirmPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="auth-submit">Create Account</button>
+                <div class="auth-switch">
+                    Already have an account? <a href="#" id="switchToSignIn">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Find Your Dream Property in Nigeria</h1>
+        <p>Search from thousands of properties for sale and rent across Nigeria's major cities</p>
+        
+        <div class="search-container">
+            <form class="search-form">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <select id="location" class="form-control">
+                        <option value="">All Nigeria</option>
+                        <option value="lagos">Lagos</option>
+                        <option value="abuja">Abuja</option>
+                        <option value="port-harcourt">Port Harcourt</option>
+                        <option value="ibadan">Ibadan</option>
+                        <option value="kano">Kano</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="type">Property Type</label>
+                    <select id="type" class="form-control">
+                        <option value="">Any Type</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="house">House</option>
+                        <option value="land">Land</option>
+                        <option value="commercial">Commercial</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price Range</label>
+                    <select id="price" class="form-control">
+                        <option value="">Any Price</option>
+                        <option value="0-500000">Under ₦500,000</option>
+                        <option value="500000-2000000">₦500,000 - ₦2M</option>
+                        <option value="2000000-5000000">₦2M - ₦5M</option>
+                        <option value="5000000-10000000">₦5M - ₦10M</option>
+                        <option value="10000000+">Over ₦10M</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bedrooms">Bedrooms</label>
+                    <select id="bedrooms" class="form-control">
+                        <option value="">Any</option>
+                        <option value="1">1+</option>
+                        <option value="2">2+</option>
+                        <option value="3">3+</option>
+                        <option value="4">4+</option>
+                    </select>
+                </div>
+                <button type="submit" class="search-btn">Search Properties</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <h2 class="section-title">How NaijaHomes Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Find a Property</h3>
+                <p>Browse thousands of properties for sale and rent across Nigeria</p>
+            </div>
+            <div class="step">
+                <div class="step-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3>Connect with Agents</h3>
+                <p>Get in touch with verified real estate agents and property owners</p>
+            </div>
+            <div class="step">
+                <div class="step-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3>Move In</h3>
+                <p>Complete your transaction and move into your new property</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Post Ad Section -->
+    <section class="post-ad">
+        <h2>Have a Property to Sell or Rent?</h2>
+        <p>List your property on NaijaHomes and reach thousands of potential buyers and tenants across Nigeria</p>
+        <button class="btn" style="background: white; color: var(--primary); padding: 12px 30px; font-size: 1.1rem;">Post Your Ad Now</button>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>NaijaHomes</h3>
+                <p>Nigeria's leading real estate marketplace connecting buyers, sellers, and renters across the country.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Buy Properties</a></li>
+                    <li><a href="#">Rent Properties</a></li>
+                    <li><a href="#">Sell Properties</a></li>
+                    <li><a href="#">Find Agents</a></li>
+                    <li><a href="#">Resources</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Popular Cities</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Lagos</a></li>
+                    <li><a href="#">Abuja</a></li>
+                    <li><a href="#">Port Harcourt</a></li>
+                    <li><a href="#">Ibadan</a></li>
+                    <li><a href="#">Kano</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> info@naijahomes.ng</li>
+                    <li><i class="fas fa-phone"></i> +234 800 123 4567</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Real Estate Avenue, Lagos</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 NaijaHomes. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Authentication System
+        const signInBtn = document.getElementById('signInBtn');
+        const signUpBtn = document.getElementById('signUpBtn');
+        const signInModal = document.getElementById('signInModal');
+        const signUpModal = document.getElementById('signUpModal');
+        const closeSignIn = document.getElementById('closeSignIn');
+        const closeSignUp = document.getElementById('closeSignUp');
+        const switchToSignUp = document.getElementById('switchToSignUp');
+        const switchToSignIn = document.getElementById('switchToSignIn');
+        const signInForm = document.getElementById('signInForm');
+        const signUpForm = document.getElementById('signUpForm');
+        const authButtons = document.getElementById('authButtons');
+        const userMenu = document.getElementById('userMenu');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Check if user is already logged in
+        function checkLoginStatus() {
+            const user = localStorage.getItem('currentUser');
+            if (user) {
+                const userData = JSON.parse(user);
+                showUserMenu(userData);
+            }
+        }
+
+        // Show user menu when logged in
+        function showUserMenu(userData) {
+            authButtons.style.display = 'none';
+            userMenu.style.display = 'flex';
+            userName.textContent = userData.name;
+            userAvatar.textContent = userData.name.charAt(0).toUpperCase();
+        }
+
+        // Show login buttons when logged out
+        function showAuthButtons() {
+            authButtons.style.display = 'flex';
+            userMenu.style.display = 'none';
+            localStorage.removeItem('currentUser');
+        }
+
+        // Open modals
+        signInBtn.addEventListener('click', () => {
+            signInModal.style.display = 'flex';
+        });
+
+        signUpBtn.addEventListener('click', () => {
+            signUpModal.style.display = 'flex';
+        });
+
+        // Close modals
+        closeSignIn.addEventListener('click', () => {
+            signInModal.style.display = 'none';
+        });
+
+        closeSignUp.addEventListener('click', () => {
+            signUpModal.style.display = 'none';
+        });
+
+        // Switch between modals
+        switchToSignUp.addEventListener('click', (e) => {
+            e.preventDefault();
+            signInModal.style.display = 'none';
+            signUpModal.style.display = 'flex';
+        });
+
+        switchToSignIn.addEventListener('click', (e) => {
+            e.preventDefault();
+            signUpModal.style.display = 'none';
+            signInModal.style.display = 'flex';
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === signInModal) {
+                signInModal.style.display = 'none';
+            }
+            if (e.target === signUpModal) {
+                signUpModal.style.display = 'none';
+            }
+        });
+
+        // Handle Sign In
+        signInForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+            
+            // Simple validation
+            if (email && password) {
+                // In a real app, you would make an API call here
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    showUserMenu(user);
+                    signInModal.style.display = 'none';
+                    signInForm.reset();
+                    alert('Welcome back to NaijaHomes!');
+                } else {
+                    alert('Invalid email or password. Please try again.');
+                }
+            }
+        });
+
+        // Handle Sign Up
+        signUpForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signUpName').value;
+            const email = document.getElementById('signUpEmail').value;
+            const phone = document.getElementById('signUpPhone').value;
+            const password = document.getElementById('signUpPassword').value;
+            const confirmPassword = document.getElementById('signUpConfirmPassword').value;
+            
+            // Validation
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            if (name && email && phone && password) {
+                // Save user to localStorage (in real app, send to backend)
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                
+                // Check if user already exists
+                if (users.find(u => u.email === email)) {
+                    alert('An account with this email already exists!');
+                    return;
+                }
+                
+                const newUser = { name, email, phone, password };
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(newUser));
+                
+                showUserMenu(newUser);
+                signUpModal.style.display = 'none';
+                signUpForm.reset();
+                alert('Welcome to NaijaHomes! Your account has been created successfully.');
+            }
+        });
+
+        // Handle Logout
+        logoutBtn.addEventListener('click', () => {
+            showAuthButtons();
+            alert('You have been logged out successfully.');
+        });
+
+        // Simple form submission handler
+        document.querySelector('.search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Search functionality would be implemented in a full application');
+        });
+        
+        // Post ad button handler
+        document.querySelector('.post-ad button').addEventListener('click', function() {
+            alert('Ad posting form would open in a full application');
+        });
+
+        // Check login status on page load
+        checkLoginStatus();
+    </script>
+</body>
+</html>
